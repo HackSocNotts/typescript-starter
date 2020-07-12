@@ -18,11 +18,25 @@ jobs:
       - name: Install Dependencies
         uses: bahmutov/npm-install@v1
 
+      - name: Upload installed dependencies
+        uses: actions/upload-artifact@v1
+        with:
+          name: node_modules
+          path: node_modules/
+
   build:
     needs: install
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download installed dependencies
+        uses: actions/download-artifact@v1
+        with:
+          name: node_modules
+
       - name: Compile Production Build
         run: yarn build
 
@@ -31,6 +45,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download installed dependencies
+        uses: actions/download-artifact@v1
+        with:
+          name: node_modules
+
       - name: Run eslint
         run: yarn lint
 
@@ -39,5 +61,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download installed dependencies
+        uses: actions/download-artifact@v1
+        with:
+          name: node_modules
+
       - name: Run Jest
         run: yarn test
