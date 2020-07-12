@@ -18,11 +18,14 @@ jobs:
       - name: Install Dependencies
         uses: bahmutov/npm-install@v1
 
-      - name: Upload installed dependencies
-        uses: actions/upload-artifact@v1
+      - name: Cache node modules
+        uses: actions/cache@v1
         with:
-          name: node_modules
-          path: node_modules/
+          path: node_modules
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          # loading an older version is fine here, since it will get an npm install
+          restore-keys: |
+            node_modules-
 
   build:
     needs: install
@@ -32,10 +35,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Download installed dependencies
-        uses: actions/download-artifact@v1
+      - name: Load node_modules
+        uses: actions/cache@v1
         with:
-          name: node_modules
+          path: node_modules
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          # no restore-keys here, so we only accept this exact version
 
       - name: Compile Production Build
         run: yarn build
@@ -48,10 +53,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Download installed dependencies
-        uses: actions/download-artifact@v1
+      - name: Load node_modules
+        uses: actions/cache@v1
         with:
-          name: node_modules
+          path: node_modules
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          # no restore-keys here, so we only accept this exact version
 
       - name: Run eslint
         run: yarn lint
@@ -64,10 +71,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Download installed dependencies
-        uses: actions/download-artifact@v1
+      - name: Load node_modules
+        uses: actions/cache@v1
         with:
-          name: node_modules
+          path: node_modules
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          # no restore-keys here, so we only accept this exact version
 
       - name: Run Jest
         run: yarn test
