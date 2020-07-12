@@ -1,0 +1,43 @@
+name: Build, Lint, and Test
+
+on: [push]
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: Install Dependencies
+        uses: bahmutov/npm-install@v1
+
+  build:
+    needs: install
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Compile Production Build
+        run: yarn build
+
+  lint:
+    needs: install
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run eslint
+        run: yarn lint
+
+  test:
+    needs: install
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Jest
+        run: yarn test
